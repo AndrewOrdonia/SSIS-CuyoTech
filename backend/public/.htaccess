@@ -1,0 +1,6 @@
+# Used only when served by Apache (Laragon "www" folder). Not needed for `php -S`.
+RewriteEngine On
+RewriteCond %{HTTP:Authorization} .
+RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^ index.php [L]

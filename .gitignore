@@ -1,0 +1,21 @@
+# Node
+node_modules/
+dist/
+dist-ssr/
+*.local
+.vite/
+
+# Env (copy from the .env.example files)
+.env
+.env.*
+!.env.example
+
+# Back end
+backend/storage/logs/*.log
+
+# OS / Editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.log
