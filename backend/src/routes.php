@@ -16,6 +16,7 @@ $router->add('GET', '/student/profile',   [StudentController::class, 'profile'],
 $router->add('GET', '/student/grades',    [StudentController::class, 'grades'],    ['student']);
 $router->add('GET', '/student/subjects',  [StudentController::class, 'subjects'],  ['student']);
 $router->add('GET', '/student/dashboard', [StudentController::class, 'dashboard'], ['student']);
+$router->add('GET', '/student/balance', [StudentController::class, 'balanceHistory'], ['student']);
 
 // ---- Documents ---------------------------------------------------------
 $router->add('GET',  '/documents/types',       [DocumentController::class, 'types'],      ['student', 'registrar', 'admin']);

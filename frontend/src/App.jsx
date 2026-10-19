@@ -2,6 +2,7 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import Login from "./pages/Login";
 import ProtectedRoute from "./components/ProtectedRoute";
 import DashboardLayout from "./components/layout/DashboardLayout";
+import BalanceHistory from "./pages/student/BalanceHistory";
 
 import StudentDashboard from "./pages/student/Dashboard";
 import StudentProfile from "./pages/student/Profile";
@@ -29,6 +30,7 @@ export default function App() {
           <Route path="/student/grades" element={<StudentGrades />} />
           <Route path="/student/subjects" element={<StudentSubjects />} />
           <Route path="/student/documents" element={<DocumentRequest />} />
+          <Route path="/student/balance" element={<BalanceHistory />} />
         </Route>
       </Route>
 
