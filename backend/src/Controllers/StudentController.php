@@ -158,4 +158,54 @@ final class StudentController
             'activity' => array_slice($activity, 0, 5),
         ]);
     }
+    public function balanceHistory(Request $req): void
+{
+    $sid = Students::idForUser($req->user['id']);
+
+    $charges = Database::all(
+        'SELECT c.id, c.description, c.amount, c.created_at,
+                c.amount - COALESCE(
+                    (SELECT SUM(p.amount)
+                       FROM payments p
+                      WHERE p.charge_id = c.id), 0
+                ) AS balance
+           FROM charges c
+          WHERE c.student_id = ?
+          ORDER BY c.created_at DESC, c.id DESC',
+        [$sid]
+    );
+
+    $payments = Database::all(
+        'SELECT p.id, p.charge_id, p.reference_no, p.amount,
+                p.method, p.paid_at
+           FROM payments p
+           JOIN charges c ON c.id = p.charge_id
+          WHERE c.student_id = ?
+          ORDER BY p.paid_at DESC, p.id DESC',
+        [$sid]
+    );
+
+    $formattedCharges = array_map(fn($c) => [
+        'id' => (int) $c['id'],
+        'description' => $c['description'],
+        'amount' => (float) $c['amount'],
+        'balance' => round((float) $c['balance'], 2),
+        'created_at' => $c['created_at'],
+    ], $charges);
+
+    $formattedPayments = array_map(fn($p) => [
+        'id' => (int) $p['id'],
+        'charge_id' => (int) $p['charge_id'],
+        'reference_no' => $p['reference_no'],
+        'amount' => (float) $p['amount'],
+        'method' => $p['method'],
+        'paid_at' => $p['paid_at'],
+    ], $payments);
+
+    Response::json([
+        'total_balance' => Students::balance($sid),
+        'charges' => $formattedCharges,
+        'payments' => $formattedPayments,
+    ]);
+}
 }
