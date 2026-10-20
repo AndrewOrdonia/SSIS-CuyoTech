@@ -56,7 +56,7 @@ export default function Enrollment() {
     if (!window.confirm(`Remove ${e.course.code} from ${student.name}?`)) return;
     try {
       await api.delete(`/enrollment/${e.id}`);
-      setNotice({ type: "success", text: `${e.course.code} removed.` });
+      setNotice({ type: "success", text: `${e.course.code} removed from enrollment.` });
       await loadEnrollments(student);
     } catch (err) {
       setNotice({ type: "error", text: getErrorMessage(err) });
@@ -64,100 +64,138 @@ export default function Enrollment() {
   };
 
   return (
-    <div className="max-w-4xl">
-      <h1 className="text-2xl font-bold text-gray-800 mb-6">Enrollment</h1>
+    <div className="max-w-4xl space-y-6">
+      <div>
+        <h1 className="text-2xl font-bold tracking-tight text-gray-900">Student Enrollment</h1>
+        <p className="mt-1 text-xs sm:text-sm text-gray-500">
+          Manage subject loads, add courses, and verify term registrations.
+        </p>
+      </div>
 
       <Notice type={notice.type}>{notice.text}</Notice>
 
-      <StudentPicker selectedId={student?.id} onSelect={pickStudent} />
+      <StudentPicker selectedId={student?.id} onSelect={pickStudent} step={1} title="Select Student" />
 
       {student && (
         <>
-          <Card className="mb-6 overflow-hidden p-0 border border-gray-200/80">
-            <div className="p-5 pb-3 border-b border-gray-100 flex items-center justify-between">
-              <h2 className="font-bold text-gray-800 text-base flex items-center gap-2">
-                <span className="w-6 h-6 rounded-full bg-blue-900 text-white text-xs flex items-center justify-center font-bold">2</span>
-                Current Enrollment &mdash; {student.name}
+          <Card className="overflow-hidden p-0">
+            <div className="flex flex-col gap-2 border-b border-gray-100 p-5 sm:flex-row sm:items-center sm:justify-between">
+              <h2 className="flex items-center gap-2.5 text-sm font-bold text-gray-900">
+                <span className="flex h-6 w-6 items-center justify-center rounded-lg bg-[#153a33] text-xs font-bold text-white">
+                  2
+                </span>
+                Current Enrollment · <span className="text-[#153a33]">{student.name}</span>
               </h2>
-              <span className="text-xs font-semibold px-2.5 py-1 rounded-full bg-blue-50 text-blue-900 border border-blue-200">
-                {totalUnits} units
+              <span className="self-start sm:self-auto rounded-full border border-gray-200 bg-gray-50 px-2.5 py-0.5 text-xs font-semibold text-gray-700">
+                Total Load: <strong className="ml-1 text-gray-900">{totalUnits} units</strong>
               </span>
             </div>
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm">
-                <thead className="bg-gray-50/80 text-left text-xs font-semibold uppercase tracking-wider text-gray-500 border-b border-gray-200">
+
+            <div className="portal-table-wrap">
+              <table className="w-full text-left text-xs">
+                <thead className="border-b border-gray-100 bg-gray-50/70 text-[11px] font-semibold uppercase tracking-wider text-gray-500">
                   <tr>
-                    <th className="py-3.5 px-4 font-semibold">Course Code</th>
-                    <th className="py-3.5 px-4 font-semibold">Descriptive Title</th>
-                    <th className="py-3.5 px-4 font-semibold text-center">Units</th>
-                    <th className="py-3.5 px-4 font-semibold">Schedule</th>
-                    <th className="py-3.5 px-4"></th>
+                    <th className="px-5 py-3.5">Course Code</th>
+                    <th className="px-5 py-3.5">Descriptive Title</th>
+                    <th className="px-5 py-3.5 text-center">Units</th>
+                    <th className="px-5 py-3.5">Schedule</th>
+                    <th className="px-5 py-3.5 text-right">Actions</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-100">
-                  {current.length === 0 && (
+                  {current.length === 0 ? (
                     <tr>
-                      <td colSpan="5" className="py-10 text-center text-gray-400 text-sm">Not enrolled in any subject this term.</td>
-                    </tr>
-                  )}
-                  {current.map((e) => (
-                    <tr key={e.id} className="hover:bg-gray-50/60 transition-colors">
-                      <td className="py-3.5 px-4 font-semibold text-blue-900 font-mono text-sm">{e.course.code}</td>
-                      <td className="py-3.5 px-4 text-gray-800 font-medium">{e.course.title}</td>
-                      <td className="py-3.5 px-4 text-gray-600 text-center">{e.course.units}</td>
-                      <td className="py-3.5 px-4 text-gray-600">{e.schedule || "TBA"}</td>
-                      <td className="py-3.5 px-4 text-right">
-                        {e.grade === null && (
-                          <button
-                            onClick={() => handleRemove(e)}
-                            className="text-red-500 hover:text-red-700 p-1 rounded cursor-pointer"
-                            title="Remove subject"
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </button>
-                        )}
+                      <td colSpan="5" className="py-10 text-center text-xs text-gray-400">
+                        Not currently enrolled in any subject this term.
                       </td>
                     </tr>
-                  ))}
+                  ) : (
+                    current.map((e) => (
+                      <tr key={e.id} className="transition-colors hover:bg-gray-50/60">
+                        <td className="px-5 py-3.5 font-mono text-xs font-bold text-[#153a33]">
+                          {e.course.code}
+                        </td>
+                        <td className="px-5 py-3.5 font-medium text-gray-800">
+                          {e.course.title}
+                        </td>
+                        <td className="px-5 py-3.5 text-center text-gray-600">
+                          {e.course.units}
+                        </td>
+                        <td className="px-5 py-3.5 text-gray-500">
+                          {e.schedule || "TBA"}
+                        </td>
+                        <td className="px-5 py-3.5 text-right">
+                          {e.grade === null && (
+                            <button
+                              type="button"
+                              onClick={() => handleRemove(e)}
+                              className="rounded-lg p-1.5 text-gray-400 transition hover:bg-rose-50 hover:text-rose-600"
+                              title="Drop subject"
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </button>
+                          )}
+                        </td>
+                      </tr>
+                    ))
+                  )}
                 </tbody>
               </table>
             </div>
           </Card>
 
-          <Card className="mb-6 border border-gray-200/80">
-            <h2 className="font-bold text-gray-800 text-base mb-3 flex items-center gap-2">
-              <span className="w-6 h-6 rounded-full bg-blue-900 text-white text-xs flex items-center justify-center font-bold">3</span>
-              Add Subjects
+          <Card>
+            <h2 className="mb-3.5 flex items-center gap-2.5 text-sm font-bold text-gray-900">
+              <span className="flex h-6 w-6 items-center justify-center rounded-lg bg-[#153a33] text-xs font-bold text-white">
+                3
+              </span>
+              Available Subjects to Enroll
             </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-              {available.length === 0 && <p className="text-gray-400 text-sm py-2">No more subjects available this term.</p>}
+
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+              {available.length === 0 && (
+                <p className="col-span-full py-4 text-xs text-gray-400">
+                  No additional courses available for this term.
+                </p>
+              )}
               {available.map((c) => {
                 const isChecked = checked.includes(c.id);
                 return (
                   <label
                     key={c.id}
-                    className={`p-3.5 rounded-xl border-2 transition-all flex items-start gap-3 cursor-pointer ${
-                      isChecked ? "border-blue-900 bg-blue-50/50 ring-1 ring-blue-900/20" : "border-gray-200 hover:border-blue-300 hover:bg-gray-50/50"
+                    className={`flex items-start gap-3 rounded-xl border p-3.5 transition-all cursor-pointer ${
+                      isChecked
+                        ? "border-[#205247] bg-[#eef5f3]/80 shadow-xs ring-1 ring-[#205247]"
+                        : "border-gray-200/90 bg-white hover:border-gray-300 hover:bg-gray-50/70"
                     }`}
                   >
-                    <input type="checkbox" checked={isChecked} onChange={() => toggle(c.id)} className="mt-1 accent-blue-900" />
-                    <div className="min-w-0">
-                      <p className="font-semibold text-gray-800 text-sm leading-tight">
-                        <span className="font-mono text-blue-900">{c.code}</span> &mdash; {c.title}
+                    <input
+                      type="checkbox"
+                      checked={isChecked}
+                      onChange={() => toggle(c.id)}
+                      className="mt-1 h-4 w-4 rounded accent-[#153a33]"
+                    />
+                    <div className="min-w-0 flex-1">
+                      <p className="text-xs sm:text-sm font-semibold text-gray-900 leading-snug">
+                        <span className="font-mono text-[#153a33]">{c.code}</span> — {c.title}
                       </p>
-                      <p className="text-xs text-gray-500 mt-1">{c.units} units &middot; {c.schedule || "TBA"}</p>
+                      <p className="mt-1 text-[11px] text-gray-500">
+                        {c.units} units · {c.schedule || "Schedule TBA"}
+                      </p>
                     </div>
                   </label>
                 );
               })}
             </div>
-            <div className="mt-5 flex justify-end">
+
+            <div className="mt-5 flex justify-end border-t border-gray-100 pt-4">
               <button
+                type="button"
                 onClick={handleEnroll}
                 disabled={busy || checked.length === 0}
-                className="bg-blue-900 hover:bg-blue-800 text-white px-6 py-2.5 rounded-lg font-medium transition-colors shadow-xs disabled:opacity-50 cursor-pointer"
+                className="inline-flex h-10 items-center justify-center gap-2 rounded-xl bg-[#153a33] px-5 text-xs sm:text-sm font-semibold text-white shadow-xs transition hover:bg-[#102d28] disabled:cursor-not-allowed disabled:opacity-50"
               >
-                {busy ? "Enrolling..." : `Enroll Selected (${checked.length})`}
+                {busy ? "Enrolling…" : `Confirm Enrollment (${checked.length} selected)`}
               </button>
             </div>
           </Card>

@@ -22,38 +22,43 @@ export default function StudentPicker({ selectedId, onSelect, step = 1, title = 
 
   return (
     <Card className="mb-6">
-      <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <h2 className="flex items-center gap-3 text-base font-bold text-gray-900">
-          <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-900 text-xs font-bold text-white">{step}</span>
+      <div className="mb-4 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+        <h2 className="flex items-center gap-2.5 text-sm font-bold text-gray-900">
+          <span className="flex h-6 w-6 items-center justify-center rounded-lg bg-[#153a33] text-xs font-bold text-white">
+            {step}
+          </span>
           {title}
         </h2>
-        <span className="inline-flex items-center gap-1.5 text-xs font-medium text-gray-400">
-          <UsersRound className="h-3.5 w-3.5" /> Search the student directory
+        <span className="inline-flex items-center gap-1.5 text-xs text-gray-400">
+          <UsersRound className="h-3.5 w-3.5" /> Search directory
         </span>
       </div>
-      <label className="relative mb-4 block">
+
+      <label className="relative mb-3.5 block">
         <Search className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
         <input
           type="search"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          placeholder="Search by name or student number"
+          placeholder="Search by student name or ID number…"
           aria-label="Search students by name or student number"
-          className="w-full pl-10 pr-3 py-2.5 text-sm outline-none transition"
+          className="h-10 w-full rounded-xl border border-gray-200 bg-white pl-10 pr-4 text-xs sm:text-sm text-gray-900 outline-none transition placeholder:text-gray-400 focus:border-[#205247] focus:ring-2 focus:ring-[#205247]/15"
         />
       </label>
+
       {loading ? (
-        <div className="flex items-center gap-3 rounded-xl border border-dashed border-gray-200 bg-gray-50/70 px-4 py-5 text-sm text-gray-500">
-          <span className="h-4 w-4 animate-spin rounded-full border-2 border-blue-900/25 border-t-blue-900" /> Searching students…
+        <div className="flex items-center justify-center gap-2.5 rounded-xl border border-gray-100 bg-gray-50/70 py-6 text-xs text-gray-500">
+          <span className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-[#153a33]/25 border-t-[#153a33]" />
+          Searching directory…
         </div>
       ) : students.length === 0 ? (
-        <div className="rounded-xl border border-dashed border-gray-200 bg-gray-50/70 px-4 py-7 text-center">
+        <div className="rounded-xl border border-dashed border-gray-200 bg-gray-50/60 py-7 text-center">
           <UsersRound className="mx-auto h-5 w-5 text-gray-400" />
-          <p className="mt-2 text-sm font-semibold text-gray-700">No students found</p>
-          <p className="mt-1 text-xs text-gray-500">Try another name or student number.</p>
+          <p className="mt-2 text-xs font-semibold text-gray-700">No students found</p>
+          <p className="mt-0.5 text-[11px] text-gray-400">Try searching with a different name or ID.</p>
         </div>
       ) : (
-        <div className="grid max-h-72 grid-cols-1 gap-2.5 overflow-y-auto sm:grid-cols-2">
+        <div className="grid max-h-72 grid-cols-1 gap-2 overflow-y-auto sm:grid-cols-2">
           {students.map((student) => {
             const isSelected = selectedId === student.id;
             return (
@@ -62,24 +67,29 @@ export default function StudentPicker({ selectedId, onSelect, step = 1, title = 
                 type="button"
                 onClick={() => onSelect(student)}
                 aria-pressed={isSelected}
-                className={`flex items-center justify-between gap-3 rounded-xl border p-3.5 text-left transition ${
+                className={`flex items-center justify-between gap-3 rounded-xl border p-3 text-left transition-all ${
                   isSelected
-                    ? "border-blue-900 bg-blue-50 shadow-[0_0_0_2px_rgba(21,58,51,0.08)]"
-                    : "border-gray-200 bg-white hover:border-blue-200 hover:bg-gray-50"
+                    ? "border-[#205247] bg-[#eef5f3]/80 shadow-xs ring-1 ring-[#205247]"
+                    : "border-gray-200/90 bg-white hover:border-gray-300 hover:bg-gray-50/80"
                 }`}
               >
                 <span className="flex min-w-0 items-center gap-3">
-                  <span className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-xs font-bold ${isSelected ? "bg-blue-900 text-white" : "bg-gray-100 text-gray-600"}`}>
+                  <span
+                    className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-xs font-bold ${
+                      isSelected ? "bg-[#153a33] text-white" : "bg-gray-100 text-gray-700"
+                    }`}
+                  >
                     {student.name?.[0]?.toUpperCase() || "S"}
                   </span>
                   <span className="min-w-0">
-                    <span className="block truncate text-sm font-semibold text-gray-800">{student.name}</span>
-                    <span className="mt-1 block truncate text-[11px] text-gray-500">
-                      <span className="font-mono">{student.student_no}</span>{student.program ? ` · ${student.program}` : ""}
+                    <span className="block truncate text-xs font-semibold text-gray-900">{student.name}</span>
+                    <span className="mt-0.5 block truncate text-[11px] text-gray-500">
+                      <span className="font-mono">{student.student_no}</span>
+                      {student.program ? ` · ${student.program}` : ""}
                     </span>
                   </span>
                 </span>
-                {isSelected && <Check className="h-[18px] w-[18px] shrink-0 text-blue-900" />}
+                {isSelected && <Check className="h-4 w-4 shrink-0 text-[#205247]" />}
               </button>
             );
           })}

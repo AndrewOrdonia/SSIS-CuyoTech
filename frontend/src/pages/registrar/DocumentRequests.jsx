@@ -34,31 +34,41 @@ export default function DocumentRequests() {
     }
   };
 
-  const btn = "px-3 py-1 rounded-lg text-xs font-medium transition-colors cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed";
+  const actionBtn = "inline-flex items-center justify-center h-7 px-2.5 rounded-lg text-xs font-semibold transition-colors disabled:opacity-40 disabled:cursor-not-allowed";
 
   return (
-    <div>
-      <h1 className="text-2xl font-bold text-gray-800 mb-6">Document Requests</h1>
+    <div className="space-y-6">
+      <div>
+        <h1 className="text-2xl font-bold tracking-tight text-gray-900">Document Requests</h1>
+        <p className="mt-1 text-xs sm:text-sm text-gray-500">
+          Process student applications for transcripts, certifications, and enrollment records.
+        </p>
+      </div>
 
       <Notice type={notice.type}>{notice.text}</Notice>
 
-      <Card className="overflow-hidden p-0 border border-gray-200/80">
-        <div className="p-5 pb-4 border-b border-gray-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-          <h2 className="font-bold text-gray-800 text-base">TOR, COR &amp; Certification Requests</h2>
-          <div className="flex items-center gap-2">
+      <Card className="overflow-hidden p-0">
+        <div className="flex flex-col gap-3 border-b border-gray-100 p-5 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <h2 className="text-sm font-bold text-gray-900">Document Request Archive</h2>
+            <p className="mt-0.5 text-xs text-gray-500">TOR, COR, and Certificate requests</p>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-2">
             <div className="relative">
-              <Search className="absolute left-3 top-2.5 w-4 h-4 text-gray-400" />
+              <Search className="pointer-events-none absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-gray-400" />
               <input
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                placeholder="Search student"
-                className="pl-9 pr-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                placeholder="Search student or ID…"
+                className="h-9 rounded-xl border border-gray-200 bg-white pl-9 pr-3 text-xs text-gray-900 outline-none transition focus:border-[#205247] focus:ring-2 focus:ring-[#205247]/15"
               />
             </div>
+
             <select
               value={status}
               onChange={(e) => setStatus(e.target.value)}
-              className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+              className="h-9 rounded-xl border border-gray-200 bg-white px-3 text-xs font-medium text-gray-700 outline-none transition focus:border-[#205247] focus:ring-2 focus:ring-[#205247]/15"
             >
               <option value="">All statuses</option>
               <option value="pending">Pending</option>
@@ -68,68 +78,85 @@ export default function DocumentRequests() {
             </select>
           </div>
         </div>
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm">
-            <thead className="bg-gray-50/80 text-left text-xs font-semibold uppercase tracking-wider text-gray-500 border-b border-gray-200">
+
+        <div className="portal-table-wrap">
+          <table className="w-full text-left text-xs">
+            <thead className="border-b border-gray-100 bg-gray-50/70 text-[11px] font-semibold uppercase tracking-wider text-gray-500">
               <tr>
-                <th className="py-3.5 px-4 font-semibold">Student</th>
-                <th className="py-3.5 px-4 font-semibold">Document</th>
-                <th className="py-3.5 px-4 font-semibold">Purpose</th>
-                <th className="py-3.5 px-4 font-semibold text-center">Copies</th>
-                <th className="py-3.5 px-4 font-semibold">Fee</th>
-                <th className="py-3.5 px-4 font-semibold">Status</th>
-                <th className="py-3.5 px-4 font-semibold text-right">Actions</th>
+                <th className="px-5 py-3.5">Student</th>
+                <th className="px-5 py-3.5">Document Type</th>
+                <th className="px-5 py-3.5">Purpose</th>
+                <th className="px-5 py-3.5 text-center">Copies</th>
+                <th className="px-5 py-3.5">Fee & Status</th>
+                <th className="px-5 py-3.5">Progress</th>
+                <th className="px-5 py-3.5 text-right">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
               {!loading && requests.length === 0 && (
                 <tr>
-                  <td colSpan="7" className="py-12 text-center text-gray-400">
+                  <td colSpan="7" className="py-14 text-center">
                     <div className="flex flex-col items-center justify-center gap-2">
-                      <FileText className="w-8 h-8 text-gray-300" />
-                      <p className="font-medium text-gray-600">No document requests found</p>
+                      <FileText className="h-8 w-8 text-gray-300" />
+                      <p className="text-xs font-semibold text-gray-700">No document requests found</p>
+                      <p className="text-[11px] text-gray-400">Try adjusting your search criteria or status filter.</p>
                     </div>
                   </td>
                 </tr>
               )}
               {requests.map((r) => (
-                <tr key={r.id} className="hover:bg-gray-50/60 transition-colors">
-                  <td className="py-3.5 px-4">
-                    <p className="font-medium text-gray-900">{r.student_name}</p>
-                    <p className="text-xs text-gray-500 font-mono">{r.student_no}</p>
+                <tr key={r.id} className="transition-colors hover:bg-gray-50/60">
+                  <td className="px-5 py-3.5">
+                    <p className="font-semibold text-gray-900">{r.student_name}</p>
+                    <p className="font-mono text-[11px] text-gray-500">{r.student_no}</p>
                   </td>
-                  <td className="py-3.5 px-4 text-gray-800">
-                    {r.type?.name}
-                    <p className="text-[11px] text-gray-400">{formatDateTime(r.created_at)}</p>
+                  <td className="px-5 py-3.5">
+                    <p className="font-medium text-gray-900">{r.type?.name}</p>
+                    <p className="text-[10px] text-gray-400">{formatDateTime(r.created_at)}</p>
                   </td>
-                  <td className="py-3.5 px-4 text-gray-600 max-w-48 truncate" title={r.purpose}>{r.purpose}</td>
-                  <td className="py-3.5 px-4 text-gray-600 text-center">{r.copies}</td>
-                  <td className="py-3.5 px-4">
-                    <p className="font-mono font-semibold text-gray-800">{peso(r.fee)}</p>
-                    <p className={`text-[11px] font-medium ${r.paid ? "text-emerald-600" : "text-amber-600"}`}>
+                  <td className="px-5 py-3.5 max-w-44 truncate text-gray-600" title={r.purpose}>
+                    {r.purpose}
+                  </td>
+                  <td className="px-5 py-3.5 text-center font-medium text-gray-700">
+                    {r.copies}
+                  </td>
+                  <td className="px-5 py-3.5">
+                    <p className="font-mono font-semibold text-gray-900">{peso(r.fee)}</p>
+                    <p className={`text-[10px] font-semibold ${r.paid ? "text-emerald-700" : "text-amber-700"}`}>
                       {r.paid ? "Paid" : "Unpaid"}
                     </p>
                   </td>
-                  <td className="py-3.5 px-4"><Badge status={r.status} /></td>
-                  <td className="py-3.5 px-4">
-                    <div className="flex items-center justify-end gap-2">
+                  <td className="px-5 py-3.5">
+                    <Badge status={r.status} />
+                  </td>
+                  <td className="px-5 py-3.5 text-right">
+                    <div className="flex items-center justify-end gap-1.5">
                       {r.status === "pending" && (
-                        <button onClick={() => setRequestStatus(r, "processing")} className={`${btn} bg-blue-900 hover:bg-blue-800 text-white`}>
+                        <button
+                          type="button"
+                          onClick={() => setRequestStatus(r, "processing")}
+                          className={`${actionBtn} bg-[#153a33] text-white hover:bg-[#102d28]`}
+                        >
                           Process
                         </button>
                       )}
                       {r.status === "processing" && (
                         <button
+                          type="button"
                           onClick={() => setRequestStatus(r, "approved")}
                           disabled={!r.paid}
-                          title={r.paid ? "Approve request" : "Fee must be paid at the cashier first"}
-                          className={`${btn} bg-emerald-600 hover:bg-emerald-700 text-white`}
+                          title={r.paid ? "Approve request" : "Fee must be paid at cashier first"}
+                          className={`${actionBtn} bg-emerald-700 text-white hover:bg-emerald-800`}
                         >
                           Approve
                         </button>
                       )}
                       {(r.status === "pending" || r.status === "processing") && (
-                        <button onClick={() => setRequestStatus(r, "rejected")} className={`${btn} border border-red-200 text-red-600 hover:bg-red-50`}>
+                        <button
+                          type="button"
+                          onClick={() => setRequestStatus(r, "rejected")}
+                          className={`${actionBtn} border border-rose-200 text-rose-700 hover:bg-rose-50`}
+                        >
                           Reject
                         </button>
                       )}

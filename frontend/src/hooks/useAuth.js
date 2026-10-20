@@ -16,7 +16,11 @@ export function useAuth() {
   };
 
   const logout = async () => {
-    try { await api.post("/logout"); } catch {}
+    try {
+      await api.post("/logout");
+    } catch {
+      // Continue client-side logout if request fails
+    }
     localStorage.clear();
     setUser(null);
   };

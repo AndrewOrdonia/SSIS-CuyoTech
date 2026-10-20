@@ -3,20 +3,18 @@ import { ArrowLeft, CreditCard, ReceiptText, Wallet } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import api from "../../services/api";
 import { Card } from "../../components/ui/Card";
+import Badge from "../../components/ui/Badge";
 
 const money = (amount) =>
-  `P${Number(amount || 0).toLocaleString("en-PH", {
+  `₱${Number(amount || 0).toLocaleString("en-PH", {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
   })}`;
 
 const formatDate = (date) => {
   if (!date) return "Date unavailable";
-
   const parsedDate = new Date(date.replace(" ", "T"));
-
   if (Number.isNaN(parsedDate.getTime())) return date;
-
   return parsedDate.toLocaleString("en-PH", {
     dateStyle: "medium",
     timeStyle: "short",
@@ -58,46 +56,49 @@ export default function BalanceHistory() {
   );
 
   return (
-    <div>
+    <div className="space-y-6">
       <button
         type="button"
         onClick={() => navigate("/student/dashboard")}
-        className="flex items-center gap-2 text-sm font-medium text-blue-900 hover:text-blue-700 mb-5"
+        className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#153a33] hover:text-[#102d28]"
       >
-        <ArrowLeft className="w-4 h-4" />
+        <ArrowLeft className="h-3.5 w-3.5" />
         Back to Dashboard
       </button>
 
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-800">
-          Balance and Payment History
+      <div>
+        <h1 className="text-2xl font-bold tracking-tight text-gray-900">
+          Balance & Payment History
         </h1>
-        <p className="text-sm text-gray-500 mt-1">
-          Review your charges, recorded payments, and remaining balance.
+        <p className="mt-1 text-xs sm:text-sm text-gray-500">
+          Review your assessment charges, posted payments, and current balance.
         </p>
       </div>
 
       {error && (
-        <div className="mb-5 rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+        <div className="rounded-xl border border-rose-200 bg-rose-50/80 p-4 text-xs font-medium text-rose-800">
           {error}
         </div>
       )}
 
       {loading ? (
-        <Card className="py-12 text-center text-gray-500">
-          Loading your financial records...
+        <Card className="py-12 text-center text-xs text-gray-500">
+          <div className="inline-block h-5 w-5 animate-spin rounded-full border-2 border-[#153a33]/25 border-t-[#153a33] mb-2" />
+          <p>Loading financial records…</p>
         </Card>
       ) : (
         <>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
             <Card>
               <div className="flex items-center gap-3">
-                <div className="w-11 h-11 rounded-xl bg-red-50 text-red-600 flex items-center justify-center">
-                  <Wallet className="w-5 h-5" />
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-rose-50 text-rose-600">
+                  <Wallet className="h-5 w-5" />
                 </div>
-                <div>
-                  <p className="text-sm text-gray-500">Outstanding Balance</p>
-                  <p className="text-xl font-bold text-gray-900">
+                <div className="min-w-0">
+                  <p className="text-[11px] font-semibold uppercase tracking-wider text-gray-500">
+                    Outstanding Balance
+                  </p>
+                  <p className="mt-1 font-mono text-xl font-bold text-gray-900">
                     {money(history.total_balance)}
                   </p>
                 </div>
@@ -106,12 +107,14 @@ export default function BalanceHistory() {
 
             <Card>
               <div className="flex items-center gap-3">
-                <div className="w-11 h-11 rounded-xl bg-blue-50 text-blue-900 flex items-center justify-center">
-                  <ReceiptText className="w-5 h-5" />
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-teal-50 text-[#205247]">
+                  <ReceiptText className="h-5 w-5" />
                 </div>
-                <div>
-                  <p className="text-sm text-gray-500">Total Charges</p>
-                  <p className="text-xl font-bold text-gray-900">
+                <div className="min-w-0">
+                  <p className="text-[11px] font-semibold uppercase tracking-wider text-gray-500">
+                    Total Charges
+                  </p>
+                  <p className="mt-1 font-mono text-xl font-bold text-gray-900">
                     {money(totalCharges)}
                   </p>
                 </div>
@@ -120,12 +123,14 @@ export default function BalanceHistory() {
 
             <Card>
               <div className="flex items-center gap-3">
-                <div className="w-11 h-11 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
-                  <CreditCard className="w-5 h-5" />
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600">
+                  <CreditCard className="h-5 w-5" />
                 </div>
-                <div>
-                  <p className="text-sm text-gray-500">Total Payments</p>
-                  <p className="text-xl font-bold text-gray-900">
+                <div className="min-w-0">
+                  <p className="text-[11px] font-semibold uppercase tracking-wider text-gray-500">
+                    Total Payments
+                  </p>
+                  <p className="mt-1 font-mono text-xl font-bold text-gray-900">
                     {money(totalPayments)}
                   </p>
                 </div>
@@ -133,29 +138,29 @@ export default function BalanceHistory() {
             </Card>
           </div>
 
-          <Card className="mb-6 overflow-hidden p-0">
-            <div className="p-5 border-b border-gray-100">
-              <h2 className="font-bold text-gray-800">Charges and Remaining Balances</h2>
-              <p className="text-xs text-gray-500 mt-1">
-                Tuition and document fees recorded in your account.
+          <Card className="overflow-hidden p-0">
+            <div className="border-b border-gray-100 p-5">
+              <h2 className="text-sm font-bold text-gray-900">Charges and Account Assessment</h2>
+              <p className="mt-0.5 text-xs text-gray-500">
+                Tuition, institutional fees, and document requests.
               </p>
             </div>
 
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm">
-                <thead className="bg-gray-50 text-left text-xs uppercase text-gray-500">
+            <div className="portal-table-wrap">
+              <table className="w-full text-left text-xs">
+                <thead className="border-b border-gray-100 bg-gray-50/70 text-[11px] font-semibold uppercase tracking-wider text-gray-500">
                   <tr>
-                    <th className="p-4">Description</th>
-                    <th className="p-4">Date</th>
-                    <th className="p-4 text-right">Charge</th>
-                    <th className="p-4 text-right">Remaining</th>
-                    <th className="p-4">Status</th>
+                    <th className="px-5 py-3.5">Description</th>
+                    <th className="px-5 py-3.5">Date</th>
+                    <th className="px-5 py-3.5 text-right">Charge</th>
+                    <th className="px-5 py-3.5 text-right">Remaining</th>
+                    <th className="px-5 py-3.5">Status</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-100">
                   {charges.length === 0 ? (
                     <tr>
-                      <td colSpan="5" className="p-8 text-center text-gray-400">
+                      <td colSpan="5" className="px-5 py-8 text-center text-gray-400">
                         No charges recorded yet.
                       </td>
                     </tr>
@@ -165,29 +170,21 @@ export default function BalanceHistory() {
                       const paid = balance <= 0;
 
                       return (
-                        <tr key={charge.id} className="hover:bg-gray-50">
-                          <td className="p-4 font-medium text-gray-800">
+                        <tr key={charge.id} className="transition-colors hover:bg-gray-50/60">
+                          <td className="px-5 py-3.5 font-medium text-gray-900">
                             {charge.description}
                           </td>
-                          <td className="p-4 text-gray-500 whitespace-nowrap">
+                          <td className="px-5 py-3.5 whitespace-nowrap text-gray-500">
                             {formatDate(charge.created_at)}
                           </td>
-                          <td className="p-4 text-right whitespace-nowrap">
+                          <td className="px-5 py-3.5 whitespace-nowrap text-right font-mono text-gray-700">
                             {money(charge.amount)}
                           </td>
-                          <td className="p-4 text-right font-semibold whitespace-nowrap">
+                          <td className="px-5 py-3.5 whitespace-nowrap text-right font-mono font-semibold text-gray-900">
                             {money(balance)}
                           </td>
-                          <td className="p-4">
-                            <span
-                              className={`inline-block rounded-full px-2.5 py-1 text-xs font-semibold ${
-                                paid
-                                  ? "bg-emerald-50 text-emerald-700"
-                                  : "bg-amber-50 text-amber-700"
-                              }`}
-                            >
-                              {paid ? "Paid" : "Unpaid / Partial"}
-                            </span>
+                          <td className="px-5 py-3.5">
+                            <Badge status={paid ? "paid" : "unpaid"} />
                           </td>
                         </tr>
                       );
@@ -199,28 +196,28 @@ export default function BalanceHistory() {
           </Card>
 
           <Card className="overflow-hidden p-0">
-            <div className="p-5 border-b border-gray-100">
-              <h2 className="font-bold text-gray-800">Payment Transactions</h2>
-              <p className="text-xs text-gray-500 mt-1">
-                Payments recorded by the cashier.
+            <div className="border-b border-gray-100 p-5">
+              <h2 className="text-sm font-bold text-gray-900">Payment Transactions</h2>
+              <p className="mt-0.5 text-xs text-gray-500">
+                Official cashier receipts posted to your account.
               </p>
             </div>
 
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm">
-                <thead className="bg-gray-50 text-left text-xs uppercase text-gray-500">
+            <div className="portal-table-wrap">
+              <table className="w-full text-left text-xs">
+                <thead className="border-b border-gray-100 bg-gray-50/70 text-[11px] font-semibold uppercase tracking-wider text-gray-500">
                   <tr>
-                    <th className="p-4">Reference No.</th>
-                    <th className="p-4">Charge</th>
-                    <th className="p-4">Payment Method</th>
-                    <th className="p-4">Date Paid</th>
-                    <th className="p-4 text-right">Amount</th>
+                    <th className="px-5 py-3.5">Reference No.</th>
+                    <th className="px-5 py-3.5">Charge Purpose</th>
+                    <th className="px-5 py-3.5">Method</th>
+                    <th className="px-5 py-3.5">Date Paid</th>
+                    <th className="px-5 py-3.5 text-right">Amount</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-100">
                   {payments.length === 0 ? (
                     <tr>
-                      <td colSpan="5" className="p-8 text-center text-gray-400">
+                      <td colSpan="5" className="px-5 py-8 text-center text-gray-400">
                         No payments recorded yet.
                       </td>
                     </tr>
@@ -231,20 +228,20 @@ export default function BalanceHistory() {
                       );
 
                       return (
-                        <tr key={payment.id} className="hover:bg-gray-50">
-                          <td className="p-4 font-mono text-xs text-blue-900">
+                        <tr key={payment.id} className="transition-colors hover:bg-gray-50/60">
+                          <td className="px-5 py-3.5 font-mono font-semibold text-[#153a33]">
                             {payment.reference_no}
                           </td>
-                          <td className="p-4 text-gray-700">
-                            {charge?.description || "Charge"}
+                          <td className="px-5 py-3.5 text-gray-700">
+                            {charge?.description || "Assessment"}
                           </td>
-                          <td className="p-4 capitalize text-gray-600">
+                          <td className="px-5 py-3.5 capitalize text-gray-600">
                             {payment.method}
                           </td>
-                          <td className="p-4 text-gray-500 whitespace-nowrap">
+                          <td className="px-5 py-3.5 whitespace-nowrap text-gray-500">
                             {formatDate(payment.paid_at)}
                           </td>
-                          <td className="p-4 text-right font-semibold text-emerald-700 whitespace-nowrap">
+                          <td className="px-5 py-3.5 whitespace-nowrap text-right font-mono font-bold text-emerald-700">
                             {money(payment.amount)}
                           </td>
                         </tr>

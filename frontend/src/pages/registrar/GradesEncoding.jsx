@@ -46,72 +46,96 @@ export default function GradesEncoding() {
   };
 
   return (
-    <div className="max-w-4xl">
-      <h1 className="text-2xl font-bold text-gray-800 mb-6">Grades Encoding</h1>
+    <div className="max-w-4xl space-y-6">
+      <div>
+        <h1 className="text-2xl font-bold tracking-tight text-gray-900">Grades Encoding</h1>
+        <p className="mt-1 text-xs sm:text-sm text-gray-500">
+          Enter official grading marks for enrolled subjects.
+        </p>
+      </div>
 
       <Notice type={notice.type}>{notice.text}</Notice>
 
-      <StudentPicker selectedId={student?.id} onSelect={pickStudent} />
+      <StudentPicker selectedId={student?.id} onSelect={pickStudent} step={1} title="Select Student" />
 
       {student && (
-        <Card className="overflow-hidden p-0 border border-gray-200/80">
-          <div className="p-5 pb-3 border-b border-gray-100">
-            <h2 className="font-bold text-gray-800 text-base flex items-center gap-2">
-              <span className="w-6 h-6 rounded-full bg-blue-900 text-white text-xs flex items-center justify-center font-bold">2</span>
-              Encode Grades &mdash; {student.name}
+        <Card className="overflow-hidden p-0">
+          <div className="border-b border-gray-100 p-5">
+            <h2 className="flex items-center gap-2.5 text-sm font-bold text-gray-900">
+              <span className="flex h-6 w-6 items-center justify-center rounded-lg bg-[#153a33] text-xs font-bold text-white">
+                2
+              </span>
+              Encode Grades · <span className="text-[#153a33]">{student.name}</span>
             </h2>
           </div>
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead className="bg-gray-50/80 text-left text-xs font-semibold uppercase tracking-wider text-gray-500 border-b border-gray-200">
+
+          <div className="portal-table-wrap">
+            <table className="w-full text-left text-xs">
+              <thead className="border-b border-gray-100 bg-gray-50/70 text-[11px] font-semibold uppercase tracking-wider text-gray-500">
                 <tr>
-                  <th className="py-3.5 px-4 font-semibold">Course Code</th>
-                  <th className="py-3.5 px-4 font-semibold">Descriptive Title</th>
-                  <th className="py-3.5 px-4 font-semibold">Term</th>
-                  <th className="py-3.5 px-4 font-semibold text-center">Units</th>
-                  <th className="py-3.5 px-4 font-semibold">Final Grade</th>
-                  <th className="py-3.5 px-4"></th>
+                  <th className="px-5 py-3.5">Course Code</th>
+                  <th className="px-5 py-3.5">Descriptive Title</th>
+                  <th className="px-5 py-3.5">Term</th>
+                  <th className="px-5 py-3.5 text-center">Units</th>
+                  <th className="px-5 py-3.5">Final Mark</th>
+                  <th className="px-5 py-3.5 text-right">Action</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
-                {enrollments.length === 0 && (
+                {enrollments.length === 0 ? (
                   <tr>
-                    <td colSpan="6" className="py-10 text-center text-gray-400 text-sm">This student has no enrolled subjects.</td>
+                    <td colSpan="6" className="py-10 text-center text-xs text-gray-400">
+                      This student has no enrolled subjects for this term.
+                    </td>
                   </tr>
+                ) : (
+                  enrollments.map((e) => {
+                    const value = edits[e.id] ?? (e.grade === null ? "" : String(e.grade));
+                    const dirty = edits[e.id] !== undefined && edits[e.id] !== "";
+                    const isSaving = savingId === e.id;
+
+                    return (
+                      <tr key={e.id} className="transition-colors hover:bg-gray-50/60">
+                        <td className="px-5 py-3.5 font-mono text-xs font-bold text-[#153a33]">
+                          {e.course.code}
+                        </td>
+                        <td className="px-5 py-3.5 font-medium text-gray-800">
+                          {e.course.title}
+                        </td>
+                        <td className="px-5 py-3.5 text-gray-500">
+                          {e.term}
+                        </td>
+                        <td className="px-5 py-3.5 text-center text-gray-600">
+                          {e.course.units}
+                        </td>
+                        <td className="px-5 py-3.5">
+                          <select
+                            value={value}
+                            onChange={(ev) => setEdits({ ...edits, [e.id]: ev.target.value })}
+                            className="h-8 rounded-lg border border-gray-200 bg-white px-2.5 font-mono text-xs text-gray-900 outline-none transition focus:border-[#205247] focus:ring-2 focus:ring-[#205247]/15"
+                          >
+                            <option value="">— Unassigned —</option>
+                            {GRADE_OPTIONS.map((g) => (
+                              <option key={g} value={String(g)}>
+                                {g.toFixed(2)}
+                              </option>
+                            ))}
+                          </select>
+                        </td>
+                        <td className="px-5 py-3.5 text-right">
+                          <button
+                            type="button"
+                            onClick={() => save(e)}
+                            disabled={!dirty || isSaving}
+                            className="inline-flex h-8 items-center justify-center rounded-lg bg-[#153a33] px-3 text-xs font-semibold text-white shadow-xs transition hover:bg-[#102d28] disabled:cursor-not-allowed disabled:opacity-40"
+                          >
+                            {isSaving ? "Saving…" : "Save"}
+                          </button>
+                        </td>
+                      </tr>
+                    );
+                  })
                 )}
-                {enrollments.map((e) => {
-                  const value = edits[e.id] ?? (e.grade === null ? "" : String(e.grade));
-                  const dirty = edits[e.id] !== undefined && edits[e.id] !== "";
-                  return (
-                    <tr key={e.id} className="hover:bg-gray-50/60 transition-colors">
-                      <td className="py-3.5 px-4 font-semibold text-blue-900 font-mono text-sm">{e.course.code}</td>
-                      <td className="py-3.5 px-4 text-gray-800 font-medium">{e.course.title}</td>
-                      <td className="py-3.5 px-4 text-gray-600 text-xs">{e.term}</td>
-                      <td className="py-3.5 px-4 text-gray-600 text-center">{e.course.units}</td>
-                      <td className="py-3.5 px-4">
-                        <select
-                          value={value}
-                          onChange={(ev) => setEdits({ ...edits, [e.id]: ev.target.value })}
-                          className="border border-gray-300 rounded-lg px-2.5 py-1.5 text-sm font-mono focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
-                        >
-                          <option value="">&mdash;</option>
-                          {GRADE_OPTIONS.map((g) => (
-                            <option key={g} value={String(g)}>{g.toFixed(2)}</option>
-                          ))}
-                        </select>
-                      </td>
-                      <td className="py-3.5 px-4 text-right">
-                        <button
-                          onClick={() => save(e)}
-                          disabled={!dirty || savingId === e.id}
-                          className="bg-blue-900 hover:bg-blue-800 text-white px-4 py-1.5 rounded-lg text-xs font-medium transition-colors disabled:opacity-40 cursor-pointer"
-                        >
-                          {savingId === e.id ? "Saving..." : "Save"}
-                        </button>
-                      </td>
-                    </tr>
-                  );
-                })}
               </tbody>
             </table>
           </div>

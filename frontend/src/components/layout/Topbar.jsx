@@ -5,18 +5,18 @@ import api from "../../services/api";
 
 const pageTitles = {
   "/student/dashboard": "Overview",
-  "/student/profile": "My profile",
+  "/student/profile": "My Profile",
   "/student/grades": "Grades",
-  "/student/subjects": "My subjects",
-  "/student/documents": "Document requests",
-  "/student/balance": "Balance & payments",
+  "/student/subjects": "My Subjects",
+  "/student/documents": "Document Requests",
+  "/student/balance": "Balance & Payments",
   "/registrar/enrollment": "Enrollment",
-  "/registrar/grades": "Grades encoding",
-  "/registrar/documents": "Document requests",
+  "/registrar/grades": "Grades Encoding",
+  "/registrar/documents": "Document Requests",
   "/cashier/payments": "Payments",
-  "/cashier/receipts": "Receipt archive",
-  "/department/clearance": "Clearance review",
-  "/admin/users": "User accounts",
+  "/cashier/receipts": "Receipt Archive",
+  "/department/clearance": "Clearance Review",
+  "/admin/users": "User Accounts",
 };
 
 const roleLabels = {
@@ -70,12 +70,12 @@ export default function Topbar({ onMenuClick = () => {} }) {
   };
 
   return (
-    <header className="sticky top-0 z-30 flex h-[68px] items-center justify-between border-b border-gray-200/80 bg-white/95 px-4 backdrop-blur sm:px-6 lg:px-8">
+    <header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-gray-200/80 bg-white/95 px-4 backdrop-blur-md sm:px-6 lg:px-8">
       <div className="flex min-w-0 items-center gap-2.5 sm:gap-4">
         <button
           type="button"
           onClick={onMenuClick}
-          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-gray-600 transition hover:bg-gray-100 hover:text-gray-900 lg:hidden"
+          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-gray-600 transition hover:bg-gray-100 hover:text-gray-900 lg:hidden"
           aria-label="Open navigation"
         >
           <Menu className="h-5 w-5" />
@@ -86,14 +86,18 @@ export default function Topbar({ onMenuClick = () => {} }) {
             onClick={handleBack}
             title="Go back"
             aria-label="Go back to previous page"
-            className="hidden h-9 w-9 shrink-0 items-center justify-center rounded-lg text-gray-500 transition hover:bg-gray-100 hover:text-blue-900 sm:flex"
+            className="hidden h-8 w-8 shrink-0 items-center justify-center rounded-lg text-gray-500 transition hover:bg-gray-100 hover:text-gray-900 sm:flex"
           >
-            <ArrowLeft className="h-[18px] w-[18px]" />
+            <ArrowLeft className="h-4 w-4" />
           </button>
         )}
         <div className="min-w-0">
-          <p className="truncate text-[10px] font-bold uppercase tracking-[0.16em] text-gray-400">CuyoTech · {roleLabels[user.role] || "Campus"} portal</p>
-          <p className="mt-0.5 truncate text-sm font-semibold tracking-[-0.02em] text-gray-800">{pageTitles[location.pathname] || "Student Services"}</p>
+          <p className="truncate text-[10px] font-bold uppercase tracking-[0.16em] text-gray-400">
+            {roleLabels[user.role] || "Campus"} Portal
+          </p>
+          <p className="truncate text-sm font-semibold tracking-tight text-gray-800">
+            {pageTitles[location.pathname] || "Student Services"}
+          </p>
         </div>
       </div>
 
@@ -101,41 +105,59 @@ export default function Topbar({ onMenuClick = () => {} }) {
         <button
           type="button"
           onClick={() => setIsOpen((open) => !open)}
-          className="flex items-center gap-2 rounded-xl border border-transparent p-1.5 transition hover:border-gray-200 hover:bg-gray-50 sm:gap-3 sm:px-2"
+          className="flex items-center gap-2 rounded-xl border border-transparent p-1.5 transition hover:border-gray-200 hover:bg-gray-50 sm:gap-3 sm:px-2.5"
           aria-expanded={isOpen}
           aria-label="Open user menu"
         >
-          <span className="flex h-9 w-9 items-center justify-center rounded-full border border-[#dcebe7] bg-[#eef5f3] text-xs font-bold text-[#205247]">
+          <span className="flex h-8 w-8 items-center justify-center rounded-full border border-[#dcebe7] bg-[#eef5f3] text-xs font-bold text-[#205247]">
             {user.name?.[0]?.toUpperCase() || "U"}
           </span>
           <span className="hidden text-left sm:block">
-            <span className="block max-w-[170px] truncate text-xs font-semibold text-gray-800">{user.name || "Campus user"}</span>
-            <span className="mt-0.5 block text-[10px] capitalize text-gray-400">{roleLabels[user.role] || "Account"}</span>
+            <span className="block max-w-[170px] truncate text-xs font-semibold text-gray-800">
+              {user.name || "Campus user"}
+            </span>
+            <span className="block text-[10px] capitalize text-gray-400">
+              {roleLabels[user.role] || "Account"}
+            </span>
           </span>
-          <ChevronDown className={`hidden h-4 w-4 text-gray-400 transition-transform sm:block ${isOpen ? "rotate-180" : ""}`} />
+          <ChevronDown
+            className={`hidden h-3.5 w-3.5 text-gray-400 transition-transform sm:block ${
+              isOpen ? "rotate-180" : ""
+            }`}
+          />
         </button>
 
         {isOpen && (
           <>
-            <button type="button" aria-label="Close user menu" className="fixed inset-0 z-10 cursor-default" onClick={() => setIsOpen(false)} />
-            <div className="absolute right-0 top-full z-20 mt-2 w-56 overflow-hidden rounded-xl border border-gray-200 bg-white py-1.5 shadow-[0_16px_40px_rgba(25,45,35,0.14)]">
+            <button
+              type="button"
+              aria-label="Close user menu"
+              className="fixed inset-0 z-10 cursor-default"
+              onClick={() => setIsOpen(false)}
+            />
+            <div className="absolute right-0 top-full z-20 mt-1.5 w-56 overflow-hidden rounded-xl border border-gray-200 bg-white py-1 shadow-lg">
               <div className="border-b border-gray-100 px-4 py-3">
-                <p className="truncate text-sm font-semibold text-gray-800">{user.name || "Campus user"}</p>
-                <p className="mt-0.5 text-xs capitalize text-gray-500">{roleLabels[user.role] || "Portal account"}</p>
+                <p className="truncate text-xs font-semibold text-gray-900">{user.name || "Campus user"}</p>
+                <p className="truncate text-[11px] capitalize text-gray-500">
+                  {roleLabels[user.role] || "Portal account"}
+                </p>
               </div>
               {user.role === "student" && (
                 <button
                   type="button"
-                  onClick={() => { setIsOpen(false); navigate("/student/profile"); }}
-                  className="flex w-full items-center gap-3 px-4 py-2.5 text-left text-sm text-gray-700 transition hover:bg-gray-50 hover:text-blue-900"
+                  onClick={() => {
+                    setIsOpen(false);
+                    navigate("/student/profile");
+                  }}
+                  className="flex w-full items-center gap-2.5 px-4 py-2 text-left text-xs text-gray-700 transition hover:bg-gray-50 hover:text-gray-900"
                 >
-                  <UserRound className="h-4 w-4 text-gray-400" /> View my profile
+                  <UserRound className="h-4 w-4 text-gray-400" /> View profile
                 </button>
               )}
               <button
                 type="button"
                 onClick={handleLogout}
-                className="flex w-full items-center gap-3 px-4 py-2.5 text-left text-sm font-medium text-red-700 transition hover:bg-red-50"
+                className="flex w-full items-center gap-2.5 px-4 py-2 text-left text-xs font-medium text-rose-700 transition hover:bg-rose-50"
               >
                 <LogOut className="h-4 w-4" /> Sign out
               </button>
